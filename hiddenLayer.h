@@ -9,6 +9,7 @@ class HiddenLayer
         vector<double> propagateForward(const vector<double>& inputData);
         void displayInfoHiddenLayer();
         vector<double> getOutput();
+        void propagateBackward(const vector<double>& outputDeltas, double learningRate, const vector<double>& inputData);
 
     private:
         int inputSize;

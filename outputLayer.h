@@ -8,10 +8,12 @@ class OutputLayer
         OutputLayer(int inputSize, int outputSize);
         vector<double> propagateForward(const vector<double>& inputData);
         void calculateErrorDelta(const vector<double>& targetOutput);
-        void updateWeights(double learningRate);
+        double computeCrossEntropyLoss(const vector<double>& softmaxOutput, const vector<double>& target);
+        void propagateBackward(double learningRate, const vector<double>& inputData);
         const vector<double>& getOutput() const;
         vector<double> softmax();
         void displayInfoOutputLayer();
+        vector<double> getDeltas();
     private:
         int inputSize;
         int outputSize;
@@ -19,6 +21,7 @@ class OutputLayer
         vector<vector<double>> weights;
         vector<double> deltas;
         vector<double> bias;
+        double rectifiedLinearUnitDerivative(double num);
         
 };
 

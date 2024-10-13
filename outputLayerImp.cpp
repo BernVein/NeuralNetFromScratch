@@ -51,12 +51,6 @@ vector<double> OutputLayer::softmax()
     return softmaxOutput;
 }
 
-void OutputLayer::calculateErrorDelta(const vector<double>& targetOutput)
-{
-    for(int i = 0; i < outputSize; i++)
-        deltas[i] = output[i] - targetOutput[i];
-}
-
 void OutputLayer::displayInfoOutputLayer()
 {
     cout << "Weight Connections (Hidden -> Output):" << endl;
@@ -90,7 +84,61 @@ void OutputLayer::displayInfoOutputLayer()
         cout << i + 1 << ": " << softmaxResult[i] * 100 << "%" << endl;
 
     cout << endl << endl << endl;
-
 }
 
 const vector<double>& OutputLayer::getOutput() const{return output;}
+
+double OutputLayer::computeCrossEntropyLoss(const vector<double>& softmaxOutput, const vector<double>& target)
+{
+    double loss = 0.0;
+    for(int i = 0; i < outputSize; i++)
+    {
+        loss -= target[i] * log(softmaxOutput[i]);
+    }
+    return loss;
+}
+
+void OutputLayer::calculateErrorDelta(const vector<double>& targetOutput)
+{
+    vector<double> softmaxOutput = softmax();
+    for(int i = 0; i < outputSize; i++)
+    {
+        deltas[i] = softmaxOutput[i] - targetOutput[i];
+    }
+}
+
+vector<double> OutputLayer::getDeltas(){return deltas;}
+
+double OutputLayer::rectifiedLinearUnitDerivative(double num)
+{
+    if(num > 0) return 1.0;
+    else return 0.0;
+}
+
+void OutputLayer::propagateBackward(double learningRate, const vector<double>& inputData)
+{
+    vector<double> hiddenDeltas(outputSize);
+    for(int i = 0; i < outputSize; i++)
+    {
+        hiddenDeltas[i] = deltas[i] * rectifiedLinearUnitDerivative(output[i]);
+    }
+
+    for(int i = 0; i < inputSize; i++)
+    {
+        for(int j = 0; j < outputSize; j++)
+        {
+            weights[i][j] -= learningRate * hiddenDeltas[j] * inputData[i];
+        }
+    }
+
+    for(int i = 0; i < outputSize; i++)
+    {
+        bias[i] -= learningRate * hiddenDeltas[i];
+    }
+
+
+}
+
+
+
+

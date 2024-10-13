@@ -15,12 +15,13 @@ int main()
 {
     vector<double> horizontalImage = 
     {
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0
+        1.0, 1.0, 1.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0
     };
+    vector<double> horizontalImageActual = {0, 0, 1};
 
-
+    // Forward propagation
     InputLayer inputLayer(horizontalImage.size());
     inputLayer.setInputData(horizontalImage);
     cout << "Inputs from input Layer:" << endl;
@@ -34,5 +35,9 @@ int main()
     outputLayer.propagateForward(hiddenLayer.getOutput());
     outputLayer.displayInfoOutputLayer();
 
+    // Backpropagation
+    outputLayer.calculateErrorDelta(horizontalImageActual);
+    outputLayer.propagateBackward(0.01, hiddenLayer.getOutput());
+    outputLayer.displayInfoOutputLayer();
 }
 

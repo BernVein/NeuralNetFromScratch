@@ -23,6 +23,8 @@ HiddenLayer::HiddenLayer(int inputSize, int outputSize) : inputSize(inputSize), 
         bias[i] = (static_cast<double>(rand()) / RAND_MAX) * 0.2 - 0.1;
 }
 
+
+
 vector<double> HiddenLayer::propagateForward(const vector<double>& inputData)
 {
     output.resize(outputSize);
