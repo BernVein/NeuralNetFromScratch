@@ -75,6 +75,14 @@ void OutputLayer::displayInfoOutputLayer()
         cout << "Output Neuron " << i << ": " << bias[i] << endl;    
 
     cout << endl;
+
+    cout << "Logits per OUTPUT neuron:" << endl;
+    for(int i = 0; i < outputSize; i++)
+    {
+        cout << "Logit of neuron " << i << ": " << output[i] << endl;
+    }
+
+    cout << endl;
     cout << "Predictions (Softmax Outputs):" << endl;
     cout << "1: Diagonal, 2: Vertical, 3: Horizontal" << endl;
     vector <double> softmaxResult = softmax();
