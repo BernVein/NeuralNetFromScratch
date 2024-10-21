@@ -17,7 +17,10 @@ class HiddenLayer
         vector<double> bias;
         vector<vector<double>> weights;
         vector<double> output;
+        vector<double> rectifiedLinearUnitDerivative();
         double rectifiedLinearUnit(double num);
+        vector <double> calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer);
+        void calculateGradientsWeight(vector<double> activationPrevLayer);
 };
 
 #endif

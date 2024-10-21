@@ -70,5 +70,32 @@ void HiddenLayer::displayInfoHiddenLayer()
     cout << endl << endl << endl;
 }
 
+vector<double> HiddenLayer::rectifiedLinearUnitDerivative()
+{
+    vector <double> reLUDerivativePerNeuron(outputSize);
+    for(int i = 0; i < outputSize; i++)
+    {
+        if(output[i] > 0) reLUDerivativePerNeuron[i] = 1.0;
+        else reLUDerivativePerNeuron[i] = 0.0;
+    }
+    return reLUDerivativePerNeuron;
+}
+
+vector <double> HiddenLayer::calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer)
+{
+    vector<double> deltaHidden(outputSize, 0.0);
+    vector <double> dReLU = rectifiedLinearUnitDerivative();
+    for(int i = 0; i < outputSize; i++)
+    {
+        double delta = 0.0;
+        for(int j = 0; j < weightsNextLayer.size(); j++)
+        {
+            delta += deltaNextLayer[j] * weightsNextLayer[j][i] * dReLU[i];
+        }
+        deltaHidden[i] = delta;
+    }
+    return deltaHidden;
+}
+
 
 double HiddenLayer::rectifiedLinearUnit(double num) {return max(0.0, num);}

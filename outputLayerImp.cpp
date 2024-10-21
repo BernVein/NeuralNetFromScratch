@@ -53,28 +53,28 @@ vector<double> OutputLayer::softmax()
 
 void OutputLayer::displayInfoOutputLayer()
 {
-    cout << "Weight Connections (Hidden -> Output):" << endl;
-    for(int i = 0; i < inputSize; i++)
-    {
-        for(int j = 0; j < outputSize; j++)
-        {
-            cout << "Hidden layer " << i << " to Ouput layer " << j << ": " << weights[i][j] << endl;
-        }
-    }
+    // cout << "Weight Connections (Hidden -> Output):" << endl;
+    // for(int i = 0; i < inputSize; i++)
+    // {
+    //     for(int j = 0; j < outputSize; j++)
+    //     {
+    //         cout << "Hidden layer " << i << " to Ouput layer " << j << ": " << weights[i][j] << endl;
+    //     }
+    // }
 
-    cout << endl;
+    // cout << endl;
 
-    cout << "Biases per OUTPUT neuron:" << endl;
-    for(int i = 0; i < outputSize; i++)
-        cout << "Output Neuron " << i << ": " << bias[i] << endl;    
+    // cout << "Biases per OUTPUT neuron:" << endl;
+    // for(int i = 0; i < outputSize; i++)
+    //     cout << "Output Neuron " << i << ": " << bias[i] << endl;    
 
-    cout << endl;
+    // cout << endl;
 
-    cout << "Logits per OUTPUT neuron:" << endl;
-    for(int i = 0; i < outputSize; i++)
-    {
-        cout << "Logit of neuron " << i << ": " << output[i] << endl;
-    }
+    // cout << "Logits per OUTPUT neuron:" << endl;
+    // for(int i = 0; i < outputSize; i++)
+    // {
+    //     cout << "Logit of neuron " << i << ": " << output[i] << endl;
+    // }
 
     cout << endl;
     cout << "Predictions (Softmax Outputs):" << endl;
@@ -88,57 +88,73 @@ void OutputLayer::displayInfoOutputLayer()
 
 const vector<double>& OutputLayer::getOutput() const{return output;}
 
-double OutputLayer::computeCrossEntropyLoss(const vector<double>& softmaxOutput, const vector<double>& target)
+// Returns a vector of all COST of each output compared to the actual output
+vector<double> OutputLayer::meanSquaredError(const vector<double>& softmaxOutput, const vector<double>& target)
 {
-    double loss = 0.0;
+    vector <double> costPerNeuron(outputSize);
     for(int i = 0; i < outputSize; i++)
     {
-        loss -= target[i] * log(softmaxOutput[i]);
+        costPerNeuron[i] = (pow(target[i] - output[i], 2));
     }
-    return loss;
+    return costPerNeuron;
 }
 
-void OutputLayer::calculateErrorDelta(const vector<double>& targetOutput)
+vector<double> OutputLayer::calculateErrorDelta(const vector<double>& targetOutput)
 {
     vector<double> softmaxOutput = softmax();
-    for(int i = 0; i < outputSize; i++)
+    vector<double> deltas(outputSize);
+    for (int i = 0; i < outputSize; i++)
     {
-        deltas[i] = softmaxOutput[i] - targetOutput[i];
+        deltas[i] = softmaxOutput[i] - targetOutput[i]; // Cross-entropy gradient
     }
+    return deltas;
 }
+
 
 vector<double> OutputLayer::getDeltas(){return deltas;}
 
-double OutputLayer::rectifiedLinearUnitDerivative(double num)
+vector<double> OutputLayer::rectifiedLinearUnitDerivative()
 {
-    if(num > 0) return 1.0;
-    else return 0.0;
-}
-
-void OutputLayer::propagateBackward(double learningRate, const vector<double>& inputData)
-{
-    vector<double> hiddenDeltas(outputSize);
+    vector <double> reLUDerivativePerNeuron(outputSize);
     for(int i = 0; i < outputSize; i++)
     {
-        hiddenDeltas[i] = deltas[i] * rectifiedLinearUnitDerivative(output[i]);
+        if(output[i] > 0) reLUDerivativePerNeuron[i] = 1.0;
+        else reLUDerivativePerNeuron[i] = 0.0;
     }
+    return reLUDerivativePerNeuron;
+}
 
-    for(int i = 0; i < inputSize; i++)
+vector<double> OutputLayer::meanSquaredErrorDerivative(vector<double> actual)
+{
+    vector <double> meanSquaredErrorDerivativePerNeuron(outputSize);
+    vector <double> softMaxOutput = softmax();
+    for(int i = 0; i < outputSize; i++)
     {
-        for(int j = 0; j < outputSize; j++)
+        meanSquaredErrorDerivativePerNeuron[i] = 2 * (actual[i] - softMaxOutput[i]);
+    }
+    return meanSquaredErrorDerivativePerNeuron;
+}
+
+void OutputLayer::calculateGradientsWeight(vector<double> activationPrevLayer)
+{
+    weightGradients.resize(outputSize, vector<double>(inputSize, 0.0));
+    for(int i = 0; i < outputSize; i++)
+    {
+        for(int j = 0; j < inputSize; j++)
         {
-            weights[i][j] -= learningRate * hiddenDeltas[j] * inputData[i];
-        }
+            weightGradients[i][j] = deltas[i] * activationPrevLayer[j];
+        } 
     }
-
-    for(int i = 0; i < outputSize; i++)
-    {
-        bias[i] -= learningRate * hiddenDeltas[i];
-    }
-
-
 }
 
-
-
-
+void OutputLayer::calculateGradientsBias()
+{
+    biasGradients.resize(outputSize, 0.0);
+    for(int i = 0; i < outputSize; i++)
+    {
+        biasGradients[i] = deltas[i];
+    }
+}
+vector<vector<double>>& OutputLayer::getWeights(){return weights;}
+vector<double>& OutputLayer::getBiases(){return bias;}
+vector<vector<double>>& OutputLayer::getWeightGradients(){return weightGradients;}
