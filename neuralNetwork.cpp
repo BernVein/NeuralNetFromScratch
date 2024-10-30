@@ -125,7 +125,7 @@ int main()
             }
             
             finalCost = calculateLossPerEpoch(cost, trainingImages.size());
-            if(epoch == 0) firstLoss = finalCost;
+            if(trainCount == 0 && epoch == 0) firstLoss = finalCost;
         }
         trainCount++;
     }
@@ -134,7 +134,7 @@ int main()
     std::chrono::duration<double> elapsed = end - start;
     cout << "Train repeated " << trainCount << " time/s. " << endl;
     cout << "Training completed in " << elapsed.count() << " seconds." << endl;
-    cout << "Initial Cost for final training: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
+    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
     vector<vector<double>> testImages = 
     {
         {1,0,0,
