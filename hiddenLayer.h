@@ -6,19 +6,17 @@ class HiddenLayer
 {
     public:
         HiddenLayer(int inputSize, int outputSize);
-        vector<double> propagateForward(const vector<double>& inputData);
+        void propagateForward(const vector<double>& inputData);
         void displayInfoHiddenLayer();
         vector<double> getOutput();
         vector<double> getDeltas();
-        vector <double> calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer);
+        void calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer);
         void calculateGradientsWeight(vector<double> activationPrevLayer);
         void calculateGradientsBias();
         vector<double> getBiasGradient();
         vector<vector<double>> getWeightGradients();
-        double calculateTotalWeightGradients();
-        double calculateTotalBiasGradients();
-        void updateWeights(double learningRate, double weightGradientAvg);
-        void updateBias(double learningRate, double biasGradientAvg);
+        void updateWeights(double learningRate);
+        void updateBias(double learningRate);
     private:
         int inputSize;
         int outputSize;
@@ -28,8 +26,8 @@ class HiddenLayer
         vector<double> biasGradients;
         vector<double> deltas;
         vector<double> output;
-        double rectifiedLinearUnitDerivative(double activation);
-        double rectifiedLinearUnit(double num);
+        double sigmoid(double x);
+        double sigmoidDerivative(double activation);
 
 };
 #endif

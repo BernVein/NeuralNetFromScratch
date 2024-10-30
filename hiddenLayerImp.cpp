@@ -4,157 +4,145 @@
 #include <cstdlib>
 #include <algorithm>
 #include "hiddenLayer.h"
+#include <vector>
 
 HiddenLayer::HiddenLayer(int inputSize, int outputSize) : inputSize(inputSize), outputSize(outputSize)
 {
-    weights.resize(inputSize, vector<double>(outputSize, 0.0));
+    weights.resize(outputSize, vector<double>(inputSize, 0.0));
     deltas.resize(outputSize, 0.0);
     output.resize(outputSize);
-    
+    bias.resize(outputSize); 
+    weightGradients.resize(outputSize, vector<double>(inputSize, 0.0));
+    biasGradients.resize(outputSize, 0.0);
+
     srand(static_cast<unsigned int>(time(0)));
-    for(int i = 0; i < inputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        for(int j = 0; j < outputSize; j++)
+        for(int i = 0; i < inputSize; i++)
         {
-            weights[i][j] = static_cast<double>(rand()) / RAND_MAX - 0.5;
+            weights[j][i] = static_cast<double>(rand()) / RAND_MAX - 0.5;
         }
     }
-    bias.resize(outputSize); 
-    for (int i = 0; i < outputSize; i++)
-        bias[i] = (static_cast<double>(rand()) / RAND_MAX) * 0.2 - 0.1;
+
+    for (int j = 0; j < outputSize; j++)
+    {
+        bias[j] = (static_cast<double>(rand()) / RAND_MAX) * 0.2 - 0.1;
+    }
+        
 }
 
-
-
-vector<double> HiddenLayer::propagateForward(const vector<double>& inputData)
+double HiddenLayer::sigmoidDerivative(double activation) 
 {
-    output.resize(outputSize);
+    return activation * (1.0 - activation);
+}
+
+void HiddenLayer::propagateForward(const vector<double>& inputData)
+{
     for(int j = 0; j < outputSize; j++)
     {
         output[j] = 0;
         for(int i = 0; i < inputSize; i++)
         {
-            output[j] += inputData[i] * weights[i][j];
+            output[j] = output[j] + (inputData[i] * weights[j][i]);
         }
         output[j] += bias[j];
-        output[j] = rectifiedLinearUnit(output[j]);
+        output[j] = sigmoid(output[j]);
     }
-    return output;
 }
 
 vector<double> HiddenLayer::getOutput(){return output;}
 
 void HiddenLayer::displayInfoHiddenLayer()
 {
-    cout << "Weight Connections (Input -> Hidden):" << endl;
-    for (int i = 0; i < inputSize; i++)
+    // cout << "Weight Connections (Hidden -> Input):" << endl;
+    // for (int j = 0; j < outputSize; j++)
+    // {
+    //     for (int i = 0; i < inputSize; i++)
+    //     {
+    //         cout << "Hidden layer " << j << " back to Input layer " << i << ": " << weights[j][i] << endl;
+    //     }
+    // }
+
+    // cout << endl;
+
+    // cout << "Biases per HIDDEN neuron:" << endl;
+    // for(int j = 0; j < outputSize; j++)
+    //     cout << "Hidden Neuron " << j << ": " << bias[j] << endl;    
+
+    // cout << endl;
+
+    // cout << "HIDDEN LAYER Normalized Outputs:" << endl;
+    // for (int j = 0; j < outputSize; j++)
+    // {
+    //     cout << "Output " << j << ": " << output[j] << endl;
+    // }
+    // cout << endl;
+        
+    cout << "Deltas for each HIDDEN neuron:" << endl;
+    for(int j = 0; j < outputSize; j++)
     {
-        for (int j = 0; j < outputSize; j++)
-        {
-            cout << "Input layer " << i << " to Hidden layer " << j << ": " << weights[i][j] << endl;
-        }
+        cout << "Delta " << j << ": " << deltas[j] << endl;
     }
-
-    cout << endl;
-
-    cout << "Biases per HIDDEN neuron:" << endl;
-    for(int i = 0; i < outputSize; i++)
-        cout << "Hidden Neuron " << i << ": " << bias[i] << endl;    
-
-    cout << endl;
-
-    cout << "Outputs:" << endl;
-    for (int i = 0; i < outputSize; i++)
-    {
-        cout << "Output " << i << ": " << output[i] << endl;
-    }
-    cout << endl << endl << endl;
+    cout << endl << endl;
 }
 
-double HiddenLayer::rectifiedLinearUnitDerivative(double activation)
+double HiddenLayer::sigmoid(double x) {return 1.0 / (1.0 + exp(-x));}
+
+void HiddenLayer::calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer)
 {
-    vector <double> reLUDerivativePerNeuron(outputSize);
-    if(activation > 0.0) return 1.0;
-    else return 0.0;
-}
-
-vector <double> HiddenLayer::calculateDelta(vector<double> deltaNextLayer, vector<vector<double>> weightsNextLayer)
-{
-    for(int i = 0; i < outputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        double delta = 0.0;
-        for(int j = 0; j < weightsNextLayer.size(); j++)
+        double deltaPerNeuron = 0.0;
+        
+        for(int i = 0; i < weightsNextLayer.size(); i++)
         {
-            delta += deltaNextLayer[j] * weightsNextLayer[j][i] * rectifiedLinearUnit(output[i]);
+            //cout << "(" << deltaPerNeuron;
+            deltaPerNeuron = deltaPerNeuron + deltaNextLayer[i] * weightsNextLayer[i][j] * sigmoidDerivative(output[j]);
+            // cout << ")+(" << deltaNextLayer[i] << ")*(" << weightsNextLayer[i][j] << ")*(" << sigmoidDerivative(output[j]) << ")=(" << deltaPerNeuron << ")" << endl;
         }
-        deltas[i] = delta;
+        deltas[j] = deltaPerNeuron;
     }
 }
+
 vector<double> HiddenLayer::getDeltas(){return deltas;}
 
 void HiddenLayer::calculateGradientsWeight(vector<double> activationPrevLayer)
 {
-    weightGradients.resize(outputSize, vector<double>(inputSize, 0.0));
-    for(int i = 0; i < outputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        for(int j = 0; j < inputSize; j++)
+        for(int i = 0; i < inputSize; i++)
         {
-            weightGradients[i][j] = deltas[i] * activationPrevLayer[j];
+            weightGradients[j][i] = deltas[j] * activationPrevLayer[i];
         } 
     }
 }
 
 void HiddenLayer::calculateGradientsBias()
 {
-    biasGradients.resize(outputSize, 0.0);
-    for(int i = 0; i < outputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        biasGradients[i] = deltas[i];
+        biasGradients[j] = deltas[j];
     }
 }
 
-double HiddenLayer::rectifiedLinearUnit(double num) {return max(0.0, num);}
 vector<double> HiddenLayer::getBiasGradient(){return biasGradients;}
 vector<vector<double>> HiddenLayer::getWeightGradients(){return weightGradients;}
 
-double HiddenLayer::calculateTotalWeightGradients()
+void HiddenLayer::updateWeights(double learningRate)
 {
-    double total = 0.0;
-    for(int i = 0; i < outputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        for(int j = 0; j < inputSize; j++)
+        for(int i = 0; i < inputSize; i++)
         {
-            total += weightGradients[i][j];
-        } 
-    }
-    return total;
-}
-double HiddenLayer::calculateTotalBiasGradients()
-{
-    double total = 0.0;
-    for(int i = 0; i < outputSize; i++)
-    {
-        total += biasGradients[i];
-    }
-    return total;
-}
-
-void HiddenLayer::updateWeights(double learningRate, double weightGradientAvg)
-{
-
-    for(int i = 0; i < outputSize; i++)
-    {
-        for(int j = 0; j < inputSize; j++)
-        {
-            weightGradients[i][j] = weightGradients[i][j] - (learningRate * weightGradientAvg);
+            weights[j][i] = weights[j][i] + (learningRate * weightGradients[j][i]);
         }
     }
 }
 
-void HiddenLayer::updateBias(double learningRate, double biasGradientAvg)
+void HiddenLayer::updateBias(double learningRate)
 {
-    for(int i = 0; i < outputSize; i++)
+    for(int j = 0; j < outputSize; j++)
     {
-        bias[i] = bias[i] - learningRate * biasGradientAvg;
+        bias[j] = bias[j] + learningRate * biasGradients[j];
     }
 }

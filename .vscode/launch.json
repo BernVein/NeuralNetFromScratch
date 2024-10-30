@@ -8,10 +8,11 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "e:/Neural Network C++",
-      "program": "e:/Neural Network C++/build/Debug/outDebug",
+      "cwd": "${workspaceFolder}",
+      "program": "E:/Neural Network C++/neural.exe", 
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
+      "preLaunchTask": "C/C++: gcc.exe build active file",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
