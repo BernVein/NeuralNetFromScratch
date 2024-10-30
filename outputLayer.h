@@ -22,9 +22,6 @@ class OutputLayer
         vector<double>& getOutput();
         void predict();
 
-        
-        
-
     private:
         int inputSize;
         vector<vector<double>> weightGradients;

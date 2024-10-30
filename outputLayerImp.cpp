@@ -110,36 +110,29 @@ double OutputLayer::sigmoid(double x)
 void OutputLayer::predict()
 {
     vector<double> softmaxValues(outputSize);
-    double sumExp = 0.0;
+    double denominator = 0.0;
 
-    for (int i = 0; i < outputSize; i++)
+    for(int i = 0; i < outputSize; i++)
     {
-        softmaxValues[i] = std::exp(output[i]);
-        sumExp += softmaxValues[i];
+        denominator += exp(output[i]);
     }
 
-    for (int i = 0; i < outputSize; i++)
+    for(int i = 0; i < outputSize; i++)
     {
-        softmaxValues[i] /= sumExp;
+        softmaxValues[i] = exp(output[i]) / denominator;
     }
 
     int maxIndex = 0;
-    double maxConfidence = softmaxValues[0];
-    for (int i = 1; i < outputSize; i++)
+    for(int i = 1; i < outputSize; i++)
     {
-        if (softmaxValues[i] > maxConfidence)
-        {
-            maxConfidence = softmaxValues[i];
-            maxIndex = i;
-        }
+        if(softmaxValues[i] > softmaxValues[maxIndex]) maxIndex = i;
     }
-
-    string prediction;
-    if (maxIndex == 0) prediction = "Diagonal";
-    else if (maxIndex == 1) prediction = "Vertical";
+    string prediction = "";
+    if(maxIndex == 0) prediction = "Diagonal";
+    else if(maxIndex == 1) prediction = "Vertical";
     else prediction = "Horizontal";
 
-    cout << "This image is probably a " << prediction << " with a confidence of " << (maxConfidence * 100) << "%" << std::endl;
+    cout << "The image is probably " << prediction << " with a confidence of " << softmaxValues[maxIndex] * 100 << "%." << endl;
 }
 
 
