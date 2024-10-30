@@ -76,9 +76,9 @@ int main()
 
     const int numTrainingExamples = trainingImages.size();
     const double learningRate = 0.1; 
-    const int epochs = 2000;
+    const int epochs = 1000;
     double firstLoss = 0.0;
-
+    double threshold = 0.001;
     int hiddenLayerNeurons = 10;
     int classifications = 3;
     InputLayer inputLayer(trainingImages[0].size());
@@ -89,7 +89,7 @@ int main()
 
     int trainCount = 0;
     double finalCost = 1.0;
-    while(finalCost >= 0.001)
+    while(finalCost >= threshold)
     {
         for (int epoch = 0; epoch < epochs; epoch++) 
         {
@@ -132,34 +132,35 @@ int main()
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
-    cout << "Train repeated " << trainCount << " time/s. " << endl;
-    cout << "Training completed in " << elapsed.count() << " seconds." << endl;
+
+    cout << "Trained " << trainCount << " time/s to reach <=" << threshold << " cost threshold." << endl;
+    cout << "Training completed in " << elapsed.count() << " second/s." << endl;
     cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
     vector<vector<double>> testImages = 
     {
         {1,0,0,
-         0,0,0,
+         1,0,0,
          1,0,0},
 
         {1,1,1,
          0,0,0,
-         0,0,1},
+         0,0,0},
 
-        {0,0,0,
-         1,0,0,
-         0,1,0},
-
-        {1,0,0,
+        {0,0,1,
          0,1,0,
-         0,0,1},
+         1,0,0},
 
-        {0,1,0,
-         0,1,1,
-         0,1,0},
-
-        {1,1,0,
+        {1,0,1,
          0,0,0,
-         1,1,1}
+         1,1,0},
+
+        {1,1,1,
+         0,0,0,
+         1,0,1},
+
+        {0,0,1,
+         0,1,0,
+         0,0,1}
     };
     
     for(int i = 0; i < testImages.size(); i++)

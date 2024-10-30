@@ -32,6 +32,7 @@ class OutputLayer
         double sigmoid(double x);
         vector<double> deltas;
         vector<double> bias;
+        vector<double> logits;
         double meanSquaredErrorDerivative(double target, double output);
         double sigmoidDerivative(double activation);    
 };

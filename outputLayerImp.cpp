@@ -16,7 +16,7 @@ OutputLayer::OutputLayer(int inputSize, int outputSize) : inputSize(inputSize), 
     vector<double> deltas(outputSize);
     biasGradients.resize(outputSize, 0.0);
     bias.resize(outputSize); 
-
+    logits.resize(outputSize);
 
     srand(static_cast<unsigned int>(time(0)));
     for(int j = 0; j < outputSize; j++)
@@ -42,6 +42,7 @@ void OutputLayer::propagateForward(const vector<double> &inputData)
             output[j] = output[j] + (inputData[i] * weights[j][i]);
         }
         output[j] += bias[j];
+        logits[j] = output[j];
         output[j] = sigmoid(output[j]);
     }            
 }
@@ -114,12 +115,12 @@ void OutputLayer::predict()
 
     for(int i = 0; i < outputSize; i++)
     {
-        denominator += exp(output[i]);
+        denominator += exp(logits[i]);
     }
 
     for(int i = 0; i < outputSize; i++)
     {
-        softmaxValues[i] = exp(output[i]) / denominator;
+        softmaxValues[i] = exp(logits[i]) / denominator;
     }
 
     int maxIndex = 0;
