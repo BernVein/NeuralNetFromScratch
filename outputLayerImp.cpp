@@ -48,36 +48,36 @@ void OutputLayer::propagateForward(const vector<double> &inputData)
 
 void OutputLayer::displayInfoOutputLayer()
 {
-    // cout << "Weight Connections (Output -> Hidden):" << endl;
-    // for(int j = 0; j < outputSize; j++)
+    cout << "Weight Connections (Output -> Hidden):" << endl;
+    for(int j = 0; j < outputSize; j++)
+    {
+        for(int i = 0; i < inputSize; i++)
+        {
+            cout << "Output layer " << j << " back to to Hidden layer " << i << ": " << weights[j][i] << endl;
+        }
+    }
+
+    cout << endl;
+
+    cout << "Biases per OUTPUT neuron:" << endl;
+    for(int j = 0; j < outputSize; j++)
+        cout << "Output Neuron " << j << ": " << bias[j] << endl;    
+
+    cout << endl;
+
+    // cout << "OUTPUT LAYER Normalized Outputs:" << endl;
+    // for (int j = 0; j < outputSize; j++)
     // {
-    //     for(int i = 0; i < inputSize; i++)
-    //     {
-    //         cout << "Output layer " << j << " back to to Hidden layer " << i << ": " << weights[j][i] << endl;
-    //     }
+    //     cout << "Output " << j << ": " << output[j] << endl;
     // }
 
     // cout << endl;
-
-    // cout << "Biases per OUTPUT neuron:" << endl;
+    // cout << "Deltas for each OUTPUT neuron:" << endl;
     // for(int j = 0; j < outputSize; j++)
-    //     cout << "Output Neuron " << j << ": " << bias[j] << endl;    
-
+    // {
+    //     cout << "Delta " << j << ": " << deltas[j] << endl;
+    // }
     // cout << endl;
-
-    cout << "OUTPUT LAYER Normalized Outputs:" << endl;
-    for (int j = 0; j < outputSize; j++)
-    {
-        cout << "Output " << j << ": " << output[j] << endl;
-    }
-
-    cout << endl;
-    cout << "Deltas for each OUTPUT neuron:" << endl;
-    for(int j = 0; j < outputSize; j++)
-    {
-        cout << "Delta " << j << ": " << deltas[j] << endl;
-    }
-    cout << endl;
 }
 
 vector<double>& OutputLayer::getOutput() {return output;}
@@ -106,6 +106,42 @@ double OutputLayer::sigmoid(double x)
 {
     return 1.0 / (1.0 + exp(-x));
 }
+
+void OutputLayer::predict()
+{
+    vector<double> softmaxValues(outputSize);
+    double sumExp = 0.0;
+
+    for (int i = 0; i < outputSize; i++)
+    {
+        softmaxValues[i] = std::exp(output[i]);
+        sumExp += softmaxValues[i];
+    }
+
+    for (int i = 0; i < outputSize; i++)
+    {
+        softmaxValues[i] /= sumExp;
+    }
+
+    int maxIndex = 0;
+    double maxConfidence = softmaxValues[0];
+    for (int i = 1; i < outputSize; i++)
+    {
+        if (softmaxValues[i] > maxConfidence)
+        {
+            maxConfidence = softmaxValues[i];
+            maxIndex = i;
+        }
+    }
+
+    string prediction;
+    if (maxIndex == 0) prediction = "Diagonal";
+    else if (maxIndex == 1) prediction = "Vertical";
+    else prediction = "Horizontal";
+
+    cout << "This image is probably a " << prediction << " with a confidence of " << (maxConfidence * 100) << "%" << std::endl;
+}
+
 
 
 vector<double> OutputLayer::getDeltas(){return deltas;}

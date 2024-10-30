@@ -54,22 +54,22 @@ vector<double> HiddenLayer::getOutput(){return output;}
 
 void HiddenLayer::displayInfoHiddenLayer()
 {
-    // cout << "Weight Connections (Hidden -> Input):" << endl;
-    // for (int j = 0; j < outputSize; j++)
-    // {
-    //     for (int i = 0; i < inputSize; i++)
-    //     {
-    //         cout << "Hidden layer " << j << " back to Input layer " << i << ": " << weights[j][i] << endl;
-    //     }
-    // }
+    cout << "Weight Connections (Hidden -> Input):" << endl;
+    for (int j = 0; j < outputSize; j++)
+    {
+        for (int i = 0; i < inputSize; i++)
+        {
+            cout << "Hidden layer " << j << " back to Input layer " << i << ": " << weights[j][i] << endl;
+        }
+    }
 
-    // cout << endl;
+    cout << endl;
 
-    // cout << "Biases per HIDDEN neuron:" << endl;
-    // for(int j = 0; j < outputSize; j++)
-    //     cout << "Hidden Neuron " << j << ": " << bias[j] << endl;    
+    cout << "Biases per HIDDEN neuron:" << endl;
+    for(int j = 0; j < outputSize; j++)
+        cout << "Hidden Neuron " << j << ": " << bias[j] << endl;    
 
-    // cout << endl;
+    cout << endl;
 
     // cout << "HIDDEN LAYER Normalized Outputs:" << endl;
     // for (int j = 0; j < outputSize; j++)
@@ -78,12 +78,12 @@ void HiddenLayer::displayInfoHiddenLayer()
     // }
     // cout << endl;
         
-    cout << "Deltas for each HIDDEN neuron:" << endl;
-    for(int j = 0; j < outputSize; j++)
-    {
-        cout << "Delta " << j << ": " << deltas[j] << endl;
-    }
-    cout << endl << endl;
+    // cout << "Deltas for each HIDDEN neuron:" << endl;
+    // for(int j = 0; j < outputSize; j++)
+    // {
+    //     cout << "Delta " << j << ": " << deltas[j] << endl;
+    // }
+    // cout << endl << endl;
 }
 
 double HiddenLayer::sigmoid(double x) {return 1.0 / (1.0 + exp(-x));}
