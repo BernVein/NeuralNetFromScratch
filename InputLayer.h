@@ -11,9 +11,7 @@ class InputLayer
         void setInputData(const vector<double>& data);
         const vector<double>& getInputData() const;
     private:
-        // Number of neurons for input layer
         int size;
-        // Data in the input neuron data
         vector<double> inputData;
 };
 

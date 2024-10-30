@@ -135,8 +135,6 @@ void OutputLayer::predict()
     cout << "The image is probably " << prediction << " with a confidence of " << softmaxValues[maxIndex] * 100 << "%." << endl;
 }
 
-
-
 vector<double> OutputLayer::getDeltas(){return deltas;}
 
 double OutputLayer::sigmoidDerivative(double activation) 
@@ -177,7 +175,7 @@ void OutputLayer::updateWeights(double learningRate)
     {
         for(int i = 0; i < inputSize; i++)
         {
-            weights[j][i] = weights[j][i] + (learningRate * weightGradients[j][i]);
+            weights[j][i] += (learningRate * weightGradients[j][i]);
         }
     }
 }
@@ -186,6 +184,6 @@ void OutputLayer::updateBias(double learningRate)
 {
     for(int j = 0; j < outputSize; j++)
     {
-        bias[j] = bias[j] + learningRate * biasGradients[j];
+        bias[j] += learningRate * biasGradients[j];
     }
 }

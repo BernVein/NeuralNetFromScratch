@@ -97,7 +97,7 @@ void HiddenLayer::calculateDelta(vector<double> deltaNextLayer, vector<vector<do
         for(int i = 0; i < weightsNextLayer.size(); i++)
         {
             //cout << "(" << deltaPerNeuron;
-            deltaPerNeuron = deltaPerNeuron + deltaNextLayer[i] * weightsNextLayer[i][j] * sigmoidDerivative(output[j]);
+            deltaPerNeuron += deltaNextLayer[i] * weightsNextLayer[i][j] * sigmoidDerivative(output[j]);
             // cout << ")+(" << deltaNextLayer[i] << ")*(" << weightsNextLayer[i][j] << ")*(" << sigmoidDerivative(output[j]) << ")=(" << deltaPerNeuron << ")" << endl;
         }
         deltas[j] = deltaPerNeuron;
@@ -134,7 +134,7 @@ void HiddenLayer::updateWeights(double learningRate)
     {
         for(int i = 0; i < inputSize; i++)
         {
-            weights[j][i] = weights[j][i] + (learningRate * weightGradients[j][i]);
+            weights[j][i] += (learningRate * weightGradients[j][i]);
         }
     }
 }
@@ -143,6 +143,6 @@ void HiddenLayer::updateBias(double learningRate)
 {
     for(int j = 0; j < outputSize; j++)
     {
-        bias[j] = bias[j] + learningRate * biasGradients[j];
+        bias[j] += learningRate * biasGradients[j];
     }
 }

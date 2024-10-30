@@ -1,6 +1,5 @@
 #include "InputLayer.h"
 
-// .resize() is to ensure na there is inputSize number of elements sa inputData
 InputLayer::InputLayer(int inputSize) : size(inputSize) {inputData.resize(inputSize);}
 void InputLayer::setInputData(const vector<double>& data)
 {
