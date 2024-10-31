@@ -78,7 +78,7 @@ int main()
     const double learningRate = 0.1; 
     const int epochs = 1000;
     double firstLoss = 0.0;
-    double threshold = 0.001;
+    double threshold = .01;
     int hiddenLayerNeurons = 10;
     int classifications = 3;
     // Step 1: Initialize network with random weights and biases
@@ -140,43 +140,63 @@ int main()
 
     cout << "Trained " << trainCount << " time/s to reach <=" << threshold << " cost threshold." << endl;
     cout << "Training completed in " << elapsed.count() << " second/s." << endl;
-    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
+    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl;
     vector<vector<double>> testImages = 
     {
-        // 1
-        {1,0,0,
-         1,1,0,
-         0,0,1},
-        // 2
-        {1,0,1,
-         1,0,0,
-         0,0,0},
-        // 3
-        {0,0,1,
+        // 1 - 2
+        {0,0,0,
+         1,1,1,
+         1,0,0},
+        // 2 - 0
+        {0,1,1,
          0,1,0,
          1,0,0},
-        // 4
-        {0,0,0,
+        // 3 - 1
+        {1,0,0,
+         1,0,0,
+         0,0,1},
+        // 4 - 2
+        {0,1,0,
          0,0,0,
          0,1,1},
-        // 5
-        {1,1,1,
+        // 5- 2
+        {1,1,0,
          0,0,0,
+         1,0,0},
+        // 6 - 1
+        {0,0,0,
+         0,1,0,
+         0,1,0},
+        // 7 - 0
+        {1,0,0,
+         0,1,0,
          0,0,1},
-        // 6
+        // 8 - 1
+        {0,0,1,
+         1,0,1,
+         0,0,1},
+        // 9 - 2
+        {0,1,0,
+         1,1,1,
+         0,0,0},
+        // 10 - 0
         {0,0,1,
          0,1,0,
-         1,0,1}
+         1,1,0},
     };
-    
+    // Diagonal = 0, Vertical = 1, Horizontal = 2
+    vector<int> expectedOutput = {2, 0, 1, 2, 2, 1, 0, 1, 2, 0};
+    int correctGuesses = 0;
     for(int i = 0; i < testImages.size(); i++)
     {
         inputLayer.setInputData(testImages[i]);
         hiddenLayer.propagateForward(inputLayer.getInputData());
         outputLayer.propagateForward(hiddenLayer.getOutput());
-        cout << "Image " << i + 1 << ": ";
-        outputLayer.predict();
+        cout << "Prediction " << i + 1 << ": " << outputLayer.predict() << " True Value: " << expectedOutput[i] << endl;
+        if(outputLayer.predict() == expectedOutput[i]) correctGuesses++;
     }
+    cout << endl;
+    cout << "Accuracy: " << (static_cast<double>(correctGuesses) / testImages.size()) * 100 << "%." << endl;
     cout << endl << endl;
 }
 

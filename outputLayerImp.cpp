@@ -111,7 +111,7 @@ double OutputLayer::sigmoid(double x)
     return 1.0 / (1.0 + exp(-x));
 }
 
-void OutputLayer::predict()
+int OutputLayer::predict()
 {
     vector<double> softmaxValues(outputSize);
     double denominator = 0.0;
@@ -131,12 +131,8 @@ void OutputLayer::predict()
     {
         if(softmaxValues[i] > softmaxValues[maxIndex]) maxIndex = i;
     }
-    string prediction = "";
-    if(maxIndex == 0) prediction = "Diagonal";
-    else if(maxIndex == 1) prediction = "Vertical";
-    else prediction = "Horizontal";
-
-    cout << "The image is probably " << prediction << " with a confidence of " << softmaxValues[maxIndex] * 100 << "%." << endl;
+    
+    return maxIndex;
 }
 
 vector<double> OutputLayer::getDeltas(){return deltas;}

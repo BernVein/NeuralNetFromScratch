@@ -20,7 +20,7 @@ class OutputLayer
         void updateWeights(double learningRate);
         void updateBias(double learningRate);
         vector<double>& getOutput();
-        void predict();
+        int predict();
 
     private:
         int inputSize;
