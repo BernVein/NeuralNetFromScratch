@@ -81,35 +81,40 @@ int main()
     double threshold = 0.001;
     int hiddenLayerNeurons = 10;
     int classifications = 3;
+    // Step 1: Initialize network with random weights and biases
     InputLayer inputLayer(trainingImages[0].size());
     HiddenLayer hiddenLayer(trainingImages[0].size(), hiddenLayerNeurons);
     OutputLayer outputLayer(hiddenLayerNeurons, classifications);
-
+    
     auto start = std::chrono::high_resolution_clock::now();
 
     int trainCount = 0;
     double finalCost = 1.0;
     while(finalCost >= threshold)
     {
+        // Loop again until the cost is acceptable
         for (int epoch = 0; epoch < epochs; epoch++) 
         {
             double cost = 0.0;
-            // For EACH training image
+            // Step 2: For EACH training image
             for(int i = 0; i < trainingImages.size(); i++)
             {
-                // Forward Pass
+                // Step 2a: Forward Pass
                 inputLayer.setInputData(trainingImages[i]);
                 hiddenLayer.propagateForward(inputLayer.getInputData());
                 outputLayer.propagateForward(hiddenLayer.getOutput());
-                // Calculate cost PER image
+
+                // Step 2b: Calculate cost PER image
                 cost += outputLayer.meanSquaredErrorCostPerImage(targetOutputs[i]);
 
                 // Backpropagation
-                // Calculate delta for outputLayer
+                // Step 2c: Calculate delta for outputLayer
                 outputLayer.deltaForOutputNeurons(targetOutputs[i]);
-                // Calculate delta for subsequent previous layer
+
+                // Step 2d: Calculate delta for previous layer
                 hiddenLayer.calculateDelta(outputLayer.getDeltas(), outputLayer.getWeights());
 
+                // Step 2e: Calculate gradients for each weight and biases for the network
                 // Calculate Weight Gradients w^L_(j,i) and bias of Neuron^L_j
                 outputLayer.calculateGradientsWeight(hiddenLayer.getOutput());
                 outputLayer.calculateGradientsBias();
@@ -117,7 +122,7 @@ int main()
                 hiddenLayer.calculateGradientsWeight(inputLayer.getInputData());
                 hiddenLayer.calculateGradientsBias();
 
-                // Update the weights and biases
+                // Step 2f: Update the weights and biases using Gradient Descent(?)
                 outputLayer.updateWeights(learningRate);
                 outputLayer.updateBias(learningRate);
                 hiddenLayer.updateWeights(learningRate);
@@ -138,29 +143,30 @@ int main()
     cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
     vector<vector<double>> testImages = 
     {
+        // 1
         {1,0,0,
-         1,0,0,
-         1,0,0},
-
-        {1,1,1,
-         0,0,0,
-         0,0,0},
-
-        {0,0,1,
-         0,1,0,
-         1,0,0},
-
+         1,1,0,
+         0,0,1},
+        // 2
         {1,0,1,
-         0,0,0,
-         1,1,0},
-
-        {1,1,1,
-         0,0,0,
-         1,0,1},
-
+         1,0,0,
+         0,0,0},
+        // 3
         {0,0,1,
          0,1,0,
-         0,0,1}
+         1,0,0},
+        // 4
+        {0,0,0,
+         0,0,0,
+         0,1,1},
+        // 5
+        {1,1,1,
+         0,0,0,
+         0,0,1},
+        // 6
+        {0,0,1,
+         0,1,0,
+         1,0,1}
     };
     
     for(int i = 0; i < testImages.size(); i++)

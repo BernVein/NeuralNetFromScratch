@@ -31,10 +31,7 @@ HiddenLayer::HiddenLayer(int inputSize, int outputSize) : inputSize(inputSize), 
         
 }
 
-double HiddenLayer::sigmoidDerivative(double activation) 
-{
-    return activation * (1.0 - activation);
-}
+double HiddenLayer::sigmoidDerivative(double activation) {return activation * (1.0 - activation);}
 
 void HiddenLayer::propagateForward(const vector<double>& inputData)
 {
@@ -96,9 +93,7 @@ void HiddenLayer::calculateDelta(vector<double> deltaNextLayer, vector<vector<do
         
         for(int i = 0; i < weightsNextLayer.size(); i++)
         {
-            //cout << "(" << deltaPerNeuron;
             deltaPerNeuron += deltaNextLayer[i] * weightsNextLayer[i][j] * sigmoidDerivative(output[j]);
-            // cout << ")+(" << deltaNextLayer[i] << ")*(" << weightsNextLayer[i][j] << ")*(" << sigmoidDerivative(output[j]) << ")=(" << deltaPerNeuron << ")" << endl;
         }
         deltas[j] = deltaPerNeuron;
     }

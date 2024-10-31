@@ -16,7 +16,7 @@ OutputLayer::OutputLayer(int inputSize, int outputSize) : inputSize(inputSize), 
     vector<double> deltas(outputSize);
     biasGradients.resize(outputSize, 0.0);
     bias.resize(outputSize); 
-    logits.resize(outputSize);
+    logits.resize(outputSize, 0.0);
 
     srand(static_cast<unsigned int>(time(0)));
     for(int j = 0; j < outputSize; j++)
@@ -44,27 +44,27 @@ void OutputLayer::propagateForward(const vector<double> &inputData)
         output[j] += bias[j];
         logits[j] = output[j];
         output[j] = sigmoid(output[j]);
-    }            
+    } 
 }
 
 void OutputLayer::displayInfoOutputLayer()
 {
-    cout << "Weight Connections (Output -> Hidden):" << endl;
-    for(int j = 0; j < outputSize; j++)
-    {
-        for(int i = 0; i < inputSize; i++)
-        {
-            cout << "Output layer " << j << " back to to Hidden layer " << i << ": " << weights[j][i] << endl;
-        }
-    }
+    // cout << "Weight Connections (Output -> Hidden):" << endl;
+    // for(int j = 0; j < outputSize; j++)
+    // {
+    //     for(int i = 0; i < inputSize; i++)
+    //     {
+    //         cout << "Output layer " << j << " back to to Hidden layer " << i << ": " << weights[j][i] << endl;
+    //     }
+    // }
 
-    cout << endl;
+    // cout << endl;
 
-    cout << "Biases per OUTPUT neuron:" << endl;
-    for(int j = 0; j < outputSize; j++)
-        cout << "Output Neuron " << j << ": " << bias[j] << endl;    
+    // cout << "Biases per OUTPUT neuron:" << endl;
+    // for(int j = 0; j < outputSize; j++)
+    //     cout << "Output Neuron " << j << ": " << bias[j] << endl;    
 
-    cout << endl;
+    // cout << endl;
 
     // cout << "OUTPUT LAYER Normalized Outputs:" << endl;
     // for (int j = 0; j < outputSize; j++)
@@ -79,6 +79,10 @@ void OutputLayer::displayInfoOutputLayer()
     //     cout << "Delta " << j << ": " << deltas[j] << endl;
     // }
     // cout << endl;
+    cout << endl;
+    cout << "Logits: " << endl;
+    for(int i = 0; i < outputSize; i++)
+        cout << "Logit " << i + 1 << ": " << logits[i] << endl;
 }
 
 vector<double>& OutputLayer::getOutput() {return output;}
@@ -99,7 +103,6 @@ vector<double> OutputLayer::deltaForOutputNeurons(const vector<double>& targetOu
     {
         deltas[i] = meanSquaredErrorDerivative(targetOutput[i], output[i]) * sigmoidDerivative(output[i]);
     }
-
     return deltas; 
 }
 
