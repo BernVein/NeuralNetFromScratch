@@ -78,7 +78,7 @@ int main()
     const double learningRate = 0.1; 
     const int epochs = 1000;
     double firstLoss = 0.0;
-    double threshold = .01;
+    double threshold = .001;
     int hiddenLayerNeurons = 10;
     int classifications = 3;
     // Step 1: Initialize network with random weights and biases
@@ -145,15 +145,15 @@ int main()
     {
         // 1 - 2
         {0,0,0,
-         1,1,1,
+         0,1,0,
          1,0,0},
         // 2 - 0
         {0,1,1,
          0,1,0,
          1,0,0},
         // 3 - 1
-        {1,0,0,
-         1,0,0,
+        {0,0,1,
+         1,0,1,
          0,0,1},
         // 4 - 2
         {0,1,0,
@@ -162,25 +162,25 @@ int main()
         // 5- 2
         {1,1,0,
          0,0,0,
-         1,0,0},
+         1,0,1},
         // 6 - 1
-        {0,0,0,
+        {1,0,0,
          0,1,0,
          0,1,0},
         // 7 - 0
         {1,0,0,
-         0,1,0,
+         0,1,1,
          0,0,1},
         // 8 - 1
-        {0,0,1,
+        {1,0,1,
          1,0,1,
          0,0,1},
         // 9 - 2
-        {0,1,0,
+        {1,1,0,
          1,1,1,
          0,0,0},
         // 10 - 0
-        {0,0,1,
+        {1,0,1,
          0,1,0,
          1,1,0},
     };
