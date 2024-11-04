@@ -111,9 +111,10 @@ double OutputLayer::sigmoid(double x)
     return 1.0 / (1.0 + exp(-x));
 }
 
-int OutputLayer::predict()
+vector<double> OutputLayer::predict()
 {
     vector<double> softmaxValues(outputSize);
+    vector<double> prediction(2);
     double denominator = 0.0;
 
     for(int i = 0; i < outputSize; i++)
@@ -131,8 +132,9 @@ int OutputLayer::predict()
     {
         if(softmaxValues[i] > softmaxValues[maxIndex]) maxIndex = i;
     }
-    
-    return maxIndex;
+    prediction[0] = maxIndex;
+    prediction[1] = softmaxValues[maxIndex];
+    return prediction;
 }
 
 vector<double> OutputLayer::getDeltas(){return deltas;}

@@ -140,12 +140,12 @@ int main()
 
     cout << "Trained " << trainCount << " time/s to reach <=" << threshold << " cost threshold." << endl;
     cout << "Training completed in " << elapsed.count() << " second/s." << endl;
-    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl;
+    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
     vector<vector<double>> testImages = 
     {
         // 1 - 2
-        {0,0,0,
-         0,1,0,
+        {1,0,0,
+         1,0,0,
          1,0,0},
         // 2 - 0
         {0,1,1,
@@ -185,15 +185,20 @@ int main()
          1,1,0},
     };
     // Diagonal = 0, Vertical = 1, Horizontal = 2
-    vector<int> expectedOutput = {2, 0, 1, 2, 2, 1, 0, 1, 2, 0};
+    vector<int> expectedOutput = {1, 0, 1, 2, 2, 1, 0, 1, 2, 0};
     int correctGuesses = 0;
     for(int i = 0; i < testImages.size(); i++)
     {
         inputLayer.setInputData(testImages[i]);
         hiddenLayer.propagateForward(inputLayer.getInputData());
         outputLayer.propagateForward(hiddenLayer.getOutput());
-        cout << "Prediction " << i + 1 << ": " << outputLayer.predict() << " True Value: " << expectedOutput[i] << endl;
-        if(outputLayer.predict() == expectedOutput[i]) correctGuesses++;
+        vector<double> prediction = outputLayer.predict();
+        string res = "";
+        if(prediction[0] == 0) res = "Diagonal";
+        else if(prediction[0] == 1) res = "Vertical";
+        else res = "Horizontal";
+        cout << "Image " << i + 1 << " is probably a " << res << " with a confidence of " << prediction[1] * 100 << "%." << endl;
+        if(prediction[0] == expectedOutput[i]) correctGuesses++;
     }
     cout << endl;
     cout << "Accuracy: " << (static_cast<double>(correctGuesses) / testImages.size()) * 100 << "%." << endl;
