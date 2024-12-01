@@ -6,15 +6,84 @@
 #include <cstdlib> 
 #include <algorithm>
 #include <chrono>
+#include <windows.h>
+
 using namespace std;
 
-double calculateLossPerEpoch(double costAllImage, int trainingDataCount){return costAllImage / static_cast<double>(trainingDataCount);}
+double calculateLossPerEpoch(double costAllImage, int trainingDataCount) {
+    return costAllImage / static_cast<double>(trainingDataCount);
+}
 
-int main()
-{  
+void drawGrid(HANDLE hConsole, const vector<vector<int>>& gridState, int cursorX, int cursorY) {
+    COORD coord;
+    for (int i = 0; i < gridState.size(); ++i) {
+        for (int j = 0; j < gridState[i].size(); ++j) {
+            coord.X = j * 2;
+            coord.Y = i;
+            SetConsoleCursorPosition(hConsole, coord);
+            if (i == cursorY && j == cursorX) {
+                SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            } else {
+                SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            }
+            cout << (gridState[i][j] ? "■" : "□");
+            
+        }
+       
+    }
+    cout << "\nPress Enter to add/remove pixel, Press C to predict."<< endl;
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+}
+
+vector<double> getUserInput(vector<vector<int>>& gridState) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    int x = 0, y = 0;
+    drawGrid(hConsole, gridState, x, y);
+
+    while (true) {
+        if (GetAsyncKeyState(VK_UP) & 0x8000) {
+            y = (y > 0) ? y - 1 : 2;
+            drawGrid(hConsole, gridState, x, y);
+            Sleep(150);
+        }
+        if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+            y = (y < 2) ? y + 1 : 0;
+            drawGrid(hConsole, gridState, x, y);
+            Sleep(150);
+        }
+        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+            x = (x > 0) ? x - 1 : 2;
+            drawGrid(hConsole, gridState, x, y);
+            Sleep(150);
+        }
+        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+            x = (x < 2) ? x + 1 : 0;
+            drawGrid(hConsole, gridState, x, y);
+            Sleep(150);
+        }
+        if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
+            gridState[y][x] = !gridState[y][x];  // Toggle the state
+            drawGrid(hConsole, gridState, x, y);
+            Sleep(150);
+        }
+        if (GetAsyncKeyState('C') & 0x8000) {
+            break;
+        }
+    }
+
+    vector<double> inputData;
+    for (const auto& row : gridState) {
+        for (int cell : row) {
+            inputData.push_back(static_cast<double>(cell));
+        }
+    }
+    return inputData;
+}
+
+int main() {
     system("cls");
-    vector<vector<double>> trainingImages = 
-    {
+    SetConsoleOutputCP(CP_UTF8);
+    vector<vector<double>> trainingImages = {
         {1, 1, 1, 0, 0, 0, 0, 0, 0}, // H
         {1, 0, 0, 1, 0, 0, 0, 0, 0}, // V
         {0, 0, 0, 0, 0, 1, 0, 0, 1}, // V
@@ -41,37 +110,36 @@ int main()
         {0, 0, 0, 0, 1, 0, 0, 0, 1}, // D
         {1, 0, 0, 1, 0, 0, 1, 0, 0}, // V
         {0, 0, 1, 0, 1, 0, 0, 0, 0}, // D
-        {1, 0, 0, 0, 1, 0, 0, 0, 0} //D
+        {1, 0, 0, 0, 1, 0, 0, 0, 0}  // D
     };
-    vector<vector<double>> targetOutputs = 
-    {
-        {0,0,1}, //H
-        {0,1,0}, //V
-        {0,1,0}, //V
-        {0,0,1}, //H    
-        {0,0,1}, //H
-        {1,0,0}, //D
-        {0,0,1}, //H
-        {1,0,0}, //D
-        {0,0,1}, //H
-        {1,0,0}, //D
-        {0,0,1}, //H
-        {0,1,0}, //V
-        {0,0,1}, //H
-        {0,1,0}, //V
-        {0,1,0}, //V
-        {0,1,0}, //V
-        {0,1,0}, //V
-        {0,1,0}, //V
-        {1,0,0}, //D
-        {0,0,1}, //H
-        {1,0,0}, //D
-        {1,0,0}, //D
-        {0,0,1}, //H
-        {1,0,0}, //D
-        {0,1,0}, //V
-        {1,0,0}, //D
-        {1,0,0}, //D
+    vector<vector<double>> targetOutputs = {
+        {0, 0, 1}, // H
+        {0, 1, 0}, // V
+        {0, 1, 0}, // V
+        {0, 0, 1}, // H    
+        {0, 0, 1}, // H
+        {1, 0, 0}, // D
+        {0, 0, 1}, // H
+        {1, 0, 0}, // D
+        {0, 0, 1}, // H
+        {1, 0, 0}, // D
+        {0, 0, 1}, // H
+        {0, 1, 0}, // V
+        {0, 0, 1}, // H
+        {0, 1, 0}, // V
+        {0, 1, 0}, // V
+        {0, 1, 0}, // V
+        {0, 1, 0}, // V
+        {0, 1, 0}, // V
+        {1, 0, 0}, // D
+        {0, 0, 1}, // H
+        {1, 0, 0}, // D
+        {1, 0, 0}, // D
+        {0, 0, 1}, // H
+        {1, 0, 0}, // D
+        {0, 1, 0}, // V
+        {1, 0, 0}, // D
+        {1, 0, 0}, // D
     };
 
     const int numTrainingExamples = trainingImages.size();
@@ -81,6 +149,7 @@ int main()
     double threshold = .001;
     int hiddenLayerNeurons = 10;
     int classifications = 3;
+
     // Step 1: Initialize network with random weights and biases
     InputLayer inputLayer(trainingImages[0].size());
     HiddenLayer hiddenLayer(trainingImages[0].size(), hiddenLayerNeurons);
@@ -90,15 +159,12 @@ int main()
 
     int trainCount = 0;
     double finalCost = 1.0;
-    while(finalCost >= threshold)
-    {
+    while(finalCost >= threshold) {
         // Loop again until the cost is acceptable
-        for (int epoch = 0; epoch < epochs; epoch++) 
-        {
+        for (int epoch = 0; epoch < epochs; epoch++) {
             double cost = 0.0;
             // Step 2: For EACH training image
-            for(int i = 0; i < trainingImages.size(); i++)
-            {
+            for(int i = 0; i < trainingImages.size(); i++) {
                 // Step 2a: Forward Pass
                 inputLayer.setInputData(trainingImages[i]);
                 hiddenLayer.propagateForward(inputLayer.getInputData());
@@ -126,7 +192,7 @@ int main()
                 outputLayer.updateWeights(learningRate);
                 outputLayer.updateBias(learningRate);
                 hiddenLayer.updateWeights(learningRate);
-                hiddenLayer.updateBias(learningRate);;
+                hiddenLayer.updateBias(learningRate);
             }
             
             finalCost = calculateLossPerEpoch(cost, trainingImages.size());
@@ -138,72 +204,27 @@ int main()
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
 
-    cout << "Trained " << trainCount << " time/s to reach <=" << threshold << " cost threshold." << endl;
-    cout << "Training completed in " << elapsed.count() << " second/s." << endl;
-    cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
-    vector<vector<double>> testImages = 
-    {
-        // 1 - 2
-        {1,0,0,
-         1,0,0,
-         1,0,0},
-        // 2 - 0
-        {0,1,1,
-         0,1,0,
-         1,0,0},
-        // 3 - 1
-        {0,0,1,
-         1,0,1,
-         0,0,1},
-        // 4 - 2
-        {0,1,0,
-         0,0,0,
-         0,1,1},
-        // 5- 2
-        {1,1,0,
-         0,0,0,
-         1,0,1},
-        // 6 - 1
-        {1,0,0,
-         0,1,0,
-         0,1,0},
-        // 7 - 0
-        {1,0,0,
-         0,1,1,
-         0,0,1},
-        // 8 - 1
-        {1,0,1,
-         1,0,1,
-         0,0,1},
-        // 9 - 2
-        {1,1,0,
-         1,1,1,
-         0,0,0},
-        // 10 - 0
-        {1,0,1,
-         0,1,0,
-         1,1,0},
-    };
-    // Diagonal = 0, Vertical = 1, Horizontal = 2
-    vector<int> expectedOutput = {1, 0, 1, 2, 2, 1, 0, 1, 2, 0};
-    int correctGuesses = 0;
-    for(int i = 0; i < testImages.size(); i++)
-    {
-        inputLayer.setInputData(testImages[i]);
+    // cout << "Trained " << trainCount << " time/s to reach <=" << threshold << " cost threshold." << endl;
+    // cout << "Training completed in " << elapsed.count() << " second/s." << endl;
+    // cout << "Initial Cost: " << firstLoss << endl << "Final Cost for final training: " << finalCost << endl << endl;
+
+    vector<vector<int>> gridState(3, vector<int>(3, 0)); // Initialid state
+
+    while (true) {
+        vector<double> userInput = getUserInput(gridState);
+        inputLayer.setInputData(userInput);
         hiddenLayer.propagateForward(inputLayer.getInputData());
         outputLayer.propagateForward(hiddenLayer.getOutput());
         vector<double> prediction = outputLayer.predict();
-        string res = "";
-        if(prediction[0] == 0) res = "Diagonal";
-        else if(prediction[0] == 1) res = "Vertical";
+
+        string res;
+        if (prediction[0] == 0) res = "Diagonal";
+        else if (prediction[0] == 1) res = "Vertical";
         else res = "Horizontal";
-        cout << "Image " << i + 1 << " is probably a " << res << " with a confidence of " << prediction[1] * 100 << "%." << endl;
-        if(prediction[0] == expectedOutput[i]) correctGuesses++;
+
+        cout << "Your input is " << prediction[1] * 100<< "% a " << res << "." << endl;
+
+        Sleep(500); 
     }
-    cout << endl;
-    cout << "Accuracy: " << (static_cast<double>(correctGuesses) / testImages.size()) * 100 << "%." << endl;
-    cout << endl << endl;
+    return 0;
 }
-
-
-
