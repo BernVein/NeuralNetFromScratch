@@ -65,22 +65,20 @@ Note: The UI uses Windows console APIs via `windows.h`, so this project targets 
 
 ## Quick Start
 
-You can compile and run using the provided batch script or the one-liner below.
+Inside the directory, you can compile and run using the provided batch script or the one-liner below.
 
 Batch script (already included):
 
 ```
-NeuralNetFromScratch\runNeuralNet.bat
+.\runNeuralNet.bat
 ```
 
 Manual compile and run (from `NeuralNetFromScratch` directory):
 
 ```
-g++ -O2 -std=c++17 -o neural neuralNetwork.cpp inputLayerImp.cpp hiddenLayerImp.cpp outputLayerImp.cpp
+g++ -o neural neuralNetwork.cpp inputLayerImp.cpp hiddenLayerImp.cpp outputLayerImp.cpp
 ./neural
 ```
-
-If you prefer C++11, change the flag to `-std=c++11`.
 
 ## Build and Run
 
@@ -104,8 +102,7 @@ g++ -o neural neuralNetwork.cpp inputLayerImp.cpp hiddenLayerImp.cpp outputLayer
 ./neural
 ```
 
-Tip: If the provided `runNeuralNet.bat` doesn’t work in your environment, use the manual command above. Batch files don’t support `#` comments, so if you edit it, prefer `REM` for comments.
-
+Tip: If the provided `runNeuralNet.bat` doesn’t work in your environment, use the manual command above.
 ## VS Code Setup (optional)
 
 This repo ships basic VS Code configuration files in `.vscode/`:
