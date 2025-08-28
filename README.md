@@ -263,8 +263,8 @@ A: Yes. Append new training examples to `trainingImages`, add corresponding one-
 
 ## References
 
-- Inline derivations are summarized in `NeuralNetFromScratch/formulas_neuralNet.docx`.
-- Classic resources: backpropagation tutorials and notes from standard ML texts (Goodfellow et al., Bishop, etc.).
+- Inline derivations are in in detail in `NeuralNetFromScratch/MachineLearningImplementation.pdf`.
+- Classic resources: backpropagation tutorials and notes from standard ML texts and YouTube videoe.
 
 ---
 
