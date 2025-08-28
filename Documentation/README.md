@@ -42,10 +42,7 @@ A **custom dataset** of 3×3 grids paired with labels indicating the type of lin
 
 For each training image, compute activations layer by layer using the **sigmoid** activation:
 
-$$
-a^{(L)}_{j} = \sigma\!\left( \sum_{i=0}^{n-1} a^{(L-1)}_{i} \, w^{(L)}_{j,i} + b^{(L)}_{j} \right), 
-\quad \text{where } \sigma(x) = \frac{1}{1 + e^{-x}}.
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150} \ a^{(L)}_{j}=\sigma\!\left(\sum_{i=0}^{n-1}a^{(L-1)}_{i}w^{(L)}_{j,i}+b^{(L)}_{j}\right),\ \sigma(x)=\frac{1}{1+e^{-x}})
 
 **Why sigmoid?**  
 It maps inputs to \( (0,1) \), which is convenient when outputs represent **probabilities**.
