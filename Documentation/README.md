@@ -1,7 +1,7 @@
 
 # Machine Learning Implementation (Neural Networks in C++)
 
-**By: Bern Vein Balermo, Ysmael John Jajalla**  
+**By: Bern Vein Balermo**  
 *Markdown export prepared on August 28, 2025*
 
 > This document is a faithful Markdown version of the original paper, with equations, code, and structure preserved. All extracted figures are saved under `images/` and embedded below where relevant.
