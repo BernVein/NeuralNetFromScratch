@@ -52,7 +52,7 @@ It maps inputs to \( (0,1) \), which is convenient when outputs represent **prob
 Use **Mean Squared Error (MSE)** to measure the difference between predicted and true values:
 
 $$
-\mathrm{MSE} = \sum_{j=0}^{n-1} (\hat y_j - a^{(F)}_j)^2.
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ \mathrm{MSE}=\sum_{j=0}^{n-1}(\hat{y}_j-a^{(F)}_j)^2)
 $$
 
 **Why MSE?**  
@@ -62,34 +62,23 @@ By squaring errors, MSE penalizes larger mistakes more strongly, helping guide t
 
 Compute **output deltas** via the chain rule:
 
-$$
-\delta^{(F)}_j = \mathrm{MSE}'(\hat y, a^{(F)}_j) \cdot \sigma'(z^{(F)}_j), 
-\quad \text{with } z \text{ the pre-activation (logit).}
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ \delta^{(F)}_{j}=\mathrm{MSE}'(\hat{y},a^{(F)}_{j})\cdot\sigma'(z^{(F)}_{j}),\ \quad\text{with }z\text{ the pre-activation (logit).})
+
 
 Then **propagate deltas backward**:
 
-$$
-\delta^{(L)}_j = \Bigg( \sum_i \delta^{(L+1)}_i \, w^{(L+1)}_{j,i} \Bigg) \cdot \sigma'\!\left(z^{(L)}_j\right).
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ \delta^{(L)}_{j}=\Bigg(\sum_{i}\delta^{(L+1)}_{i}\,w^{(L+1)}_{j,i}\Bigg)\cdot\sigma'\!\left(z^{(L)}_{j}\right))
+
 
 Gradients for **weights** and **biases**:
 
-$$
-\frac{\partial C_x}{\partial w^{(L)}_{j,i}} = \delta^{(L)}_j \, a^{(L-1)}_i,
-\qquad
-\frac{\partial C_x}{\partial b^{(L)}_{j}} = \delta^{(L)}_j.
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ \frac{\partial C_x}{\partial w^{(L)}_{j,i}}=\delta^{(L)}_{j}\,a^{(L-1)}_{i},\ \qquad\frac{\partial C_x}{\partial b^{(L)}_{j}}=\delta^{(L)}_{j}.)
 
 ### Parameter Updates
 
 Update parameters with **gradient descent** (learning rate \(\eta\)):
 
-$$
-w^{(L)}_{j,i} \leftarrow w^{(L)}_{j,i} - \eta \, \frac{\partial C_x}{\partial w^{(L)}_{j,i}},
-\qquad
-b^{(L)}_{j} \leftarrow b^{(L)}_{j} - \eta \, \frac{\partial C_x}{\partial b^{(L)}_{j}}.
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ w^{(L)}_{j,i}\leftarrow w^{(L)}_{j,i}-\eta\,\frac{\partial C_x}{\partial w^{(L)}_{j,i}},\ \qquad b^{(L)}_{j}\leftarrow b^{(L)}_{j}-\eta\,\frac{\partial C_x}{\partial b^{(L)}_{j}}.)
 
 Repeat over epochs until the cost is acceptable.
 
@@ -97,9 +86,8 @@ Repeat over epochs until the cost is acceptable.
 
 At inference, apply **softmax** to logits \(\mathbf z\) to obtain class probabilities:
 
-$$
-\sigma(\mathbf z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}.
-$$
+![equation](https://latex.codecogs.com/png.latex?\dpi{150}\ \sigma(\mathbf{z})_{i}=\frac{e^{z_{i}}}{\sum_{j=1}^{K}e^{z_{j}}}.)
+
 
 **Why softmax?**  
 Ideal for **multi-class** tasks: it produces a probability distribution over classes that sums to 1.
