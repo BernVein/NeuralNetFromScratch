@@ -95,7 +95,7 @@ cd NeuralNetFromScratch
 2) Build:
 
 ```
-g++ -O2 -std=c++17 -o neural neuralNetwork.cpp inputLayerImp.cpp hiddenLayerImp.cpp outputLayerImp.cpp
+g++ -o neural neuralNetwork.cpp inputLayerImp.cpp hiddenLayerImp.cpp outputLayerImp.cpp
 ```
 
 3) Run:
